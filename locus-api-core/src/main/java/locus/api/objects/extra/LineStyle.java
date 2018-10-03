@@ -102,6 +102,20 @@ public class LineStyle extends Storable {
 	@SuppressWarnings ("WeakerAccess")
 	public LineStyle() {
 		super();
+
+		mDrawBase = true;
+		mColorBase = COLOR_BLACK;
+		mDrawSymbol = false;
+		mColorSymbol = COLOR_WHITE;
+		mSymbol = Symbol.DOTTED;
+		mColoring = Coloring.SIMPLE;
+		mColoringParams = new Hashtable<>();
+		mWidth = 1.0f;
+		mUnits = Units.PIXELS;
+		mDrawOutline = false;
+		mColorOutline = COLOR_WHITE;
+		mDrawFill = false;
+		mColorFill = COLOR_WHITE;
 	}
 
 	/**************************************************/
@@ -377,23 +391,6 @@ public class LineStyle extends Storable {
 	@Override
 	protected int getVersion() {
 		return 0;
-	}
-
-	@Override
-	public void reset() {
-		mDrawBase = true;
-		mColorBase = COLOR_BLACK;
-		mDrawSymbol = false;
-		mColorSymbol = COLOR_WHITE;
-		mSymbol = Symbol.DOTTED;
-		mColoring = Coloring.SIMPLE;
-		mColoringParams = new Hashtable<>();
-		mWidth = 1.0f;
-		mUnits = Units.PIXELS;
-		mDrawOutline = false;
-		mColorOutline = COLOR_WHITE;
-		mDrawFill = false;
-		mColorFill = COLOR_WHITE;
 	}
 
 	@Override

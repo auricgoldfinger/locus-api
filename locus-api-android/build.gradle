@@ -15,8 +15,8 @@ android {
         minSdkVersion Integer.valueOf(PARAM_MIN_SDK_VERSION)
         targetSdkVersion Integer.valueOf(PARAM_TARGET_SDK_VERSION)
 
-        versionCode Integer.valueOf(API_CODE)
-        versionName API_VERSION
+        versionCode Integer.valueOf(LIB_LOCUS_API_CODE)
+        versionName LIB_LOCUS_API
     }
 
     // enable support for Java 8
@@ -34,18 +34,18 @@ android {
 
 dependencies {
     // Kotlin
-    compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:' + KOTLIN_VERSION
+    api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:' + KOTLIN_VERSION
 
     // use in case of direct handling over Locus Core project
     // debugApi and releaseApi is not correctly stored in maven POM!
-    //api project(':locus-api-core')
+    api project(':locus-api-core')
     // use in case of publishing to Maven. 'api' needs to be set in artifact as well
-    api 'com.asamm:locus-api:' + API_VERSION
+//    api 'com.asamm:locus-api:' + LIB_LOCUS_API
 }
 
 // maven parameters
 group = 'com.asamm'
-version = API_VERSION
+version = LIB_LOCUS_API
 
 // upload archives to local maven
 uploadArchives {
@@ -68,7 +68,7 @@ publishing {
             groupId 'com.asamm'
             artifactId 'locus-api-android'
             //noinspection GroovyAssignabilityCheck
-            version API_VERSION
+            version LIB_LOCUS_API
 
             // improve generated POM file
             pom.withXml {
@@ -136,10 +136,10 @@ bintray {
 
         //noinspection GroovyAssignabilityCheck
         version {
-            name = API_VERSION
-            desc = 'Locus API - Android, version ' + API_VERSION
+            name = LIB_LOCUS_API
+            desc = 'Locus API - Android, version ' + LIB_LOCUS_API
             released  = new Date()
-            vcsTag = API_VERSION
+            vcsTag = LIB_LOCUS_API
         }
     }
 }

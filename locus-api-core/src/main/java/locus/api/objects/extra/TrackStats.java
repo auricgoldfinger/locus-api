@@ -12,7 +12,7 @@ import locus.api.utils.DataWriterBigEndian;
  */
 public class TrackStats extends Storable {
 
-    // number of points (useful when points itself are not loaded)
+    // number of waypoints (useful when waypoints itself are not loaded)
     private int mNumOfPoints;
     // track start time (time of first point)
     private long mStartTime;
@@ -79,25 +79,14 @@ public class TrackStats extends Storable {
 	 */
     public TrackStats() {
         super();
-    }
 
-	/**
-	 * Constructor based on existing stored data.
-	 * @param dr existing data reader with stats
-	 * @throws IOException
-	 */
-    public TrackStats(DataReaderBigEndian dr) throws IOException {
-        super(dr);
-    }
+        mNumOfPoints = 0;
+        mStartTime = -1L;
+        mStopTime = -1L;
 
-	/**
-	 * Constructor based on existing stored data.
-	 * @param data existing data reader with stats
-	 * @throws IOException
-	 */
-	public TrackStats(byte[] data) throws IOException {
-		super(data);
-	}
+        // other variables
+        resetStatistics();
+    }
 
     /**************************************************/
     // GETTERS & SETTERS
@@ -106,7 +95,7 @@ public class TrackStats extends Storable {
     // NUMBER OF POINTS
 
 	/**
-	 * Number of points in track.
+	 * Number of waypoints in track.
 	 * @return number of trackpoints
 	 */
     public int getNumOfPoints() {
@@ -621,16 +610,6 @@ public class TrackStats extends Storable {
     @Override
     protected int getVersion() {
         return 3;
-    }
-
-    @Override
-    public void reset() {
-        mNumOfPoints = 0;
-        mStartTime = -1L;
-        mStopTime = -1L;
-
-        // other variables
-        resetStatistics();
     }
 
     @Override

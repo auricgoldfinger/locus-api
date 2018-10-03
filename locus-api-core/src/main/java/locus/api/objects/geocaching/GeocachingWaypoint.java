@@ -53,7 +53,7 @@ public class GeocachingWaypoint extends Storable {
 	public static final String CACHE_WAYPOINT_TYPE_PHYSICAL_STAGE = 
 			"Physical Stage";
 	public static final String CACHE_WAYPOINT_TYPE_REFERENCE =
-			"Reference Point";
+			"Reference Waypoint";
 	
 	// PARAMETERS
 	
@@ -79,6 +79,18 @@ public class GeocachingWaypoint extends Storable {
      */
 	public GeocachingWaypoint() {
 		super();
+
+		mCode = "";
+		mName = "";
+		mDesc = "";
+		mType = "";
+		mTypeImagePath = "";
+		mLon = 0.0;
+		mLat = 0.0;
+
+		// V1
+
+		mDescModified = false;
 	}
 	
     /**************************************************/
@@ -254,20 +266,5 @@ public class GeocachingWaypoint extends Storable {
         // V1
 
         dw.writeBoolean(mDescModified);
-	}
-
-	@Override
-	public void reset() {
-		mCode = "";
-		mName = "";
-		mDesc = "";
-		mType = "";
-		mTypeImagePath = "";
-		mLon = 0.0;
-		mLat = 0.0;
-
-        // V1
-
-        mDescModified = false;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import locus.api.objects.Storable;
+import locus.api.objects.StorableUtils;
 
 public class DataReaderBigEndian {
 
@@ -67,6 +68,11 @@ public class DataReaderBigEndian {
         // create new temp array
         System.arraycopy(mBuffer, mPosition - data.length, data, 0, data.length);
     }
+
+    public byte readByte() {
+		checkPosition(1);
+		return mBuffer[mPosition - 1];
+	}
 
 	public boolean readBoolean() {
 		checkPosition(1);
@@ -148,7 +154,7 @@ public class DataReaderBigEndian {
 	 */
 	public <E extends Storable> E readStorable(Class<E> claz)
 			throws InstantiationException, IllegalAccessException, IOException {
-		return Storable.read(claz, this);
+		return StorableUtils.read(claz, this);
 	}
     
     // LIST TOOLS

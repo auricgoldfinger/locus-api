@@ -189,7 +189,10 @@ public class LocusUtils {
          */
         public LocusVersion() {
             super();
-        }
+			mPackageName = "";
+			mVersionName = "";
+			mVersionCode = 0;
+		}
 
         /**
          * Basic constructor.
@@ -286,13 +289,6 @@ public class LocusUtils {
         @Override
         protected int getVersion() {
             return 0;
-        }
-
-        @Override
-        public void reset() {
-            mPackageName = "";
-            mVersionName = "";
-            mVersionCode = 0;
         }
 
         @Override
@@ -1003,7 +999,9 @@ public class LocusUtils {
 	 */
 	public static Waypoint getWaypointFromIntent(Intent intent) {
 		try {
-			return new Waypoint(intent.getByteArrayExtra(LocusConst.INTENT_EXTRA_POINT));
+			Waypoint pt = new Waypoint();
+			pt.read(intent.getByteArrayExtra(LocusConst.INTENT_EXTRA_POINT));
+			return pt;
 		} catch (Exception e) {
 			Logger.logE(TAG, "getWaypointFromIntent(" + intent + ")", e);
 			return null;
@@ -1024,7 +1022,9 @@ public class LocusUtils {
 			}
 			
 			// convert data to valid Location object
-			return new Location(intent.getByteArrayExtra(extraName));
+			Location loc = new Location();
+			loc.read(intent.getByteArrayExtra(extraName));
+			return loc;
 		} catch (Exception e) {
 			Logger.logE(TAG, "getLocationFromIntent(" + intent + ")", e);
 			return null;
@@ -1055,7 +1055,8 @@ public class LocusUtils {
 	 * @return new Locus object
 	 */
 	public static Location convertToL(android.location.Location oldLoc) {
-		Location loc = new Location(oldLoc.getProvider());
+		Location loc = new Location();
+		loc.setProvider(oldLoc.getProvider());
 		loc.setLongitude(oldLoc.getLongitude());
 		loc.setLatitude(oldLoc.getLatitude());
 		loc.setTime(oldLoc.getTime());

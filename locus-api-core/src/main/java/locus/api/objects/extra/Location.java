@@ -133,10 +133,26 @@ public class Location extends Storable {
 
         public ExtraSensor() {
         	super();
-        }
+
+			hasHr = false;
+			hr = 0;
+			hasCadence = false;
+			cadence = 0;
+			hasSpeed = false;
+			speed = 0.0f;
+			hasPower = false;
+			power = 0.0f;
+			hasStrides = false;
+			strides = 0;
+			hasBattery = false;
+			battery = 0;
+			hasTemperature = false;
+			temperature = 0;
+		}
         
         public ExtraSensor(DataReaderBigEndian dr) throws IOException {
-        	super(dr);
+        	this();
+        	read(dr);
         }
         
         @Override
@@ -207,78 +223,34 @@ public class Location extends Storable {
 			dw.writeFloat(temperature);
 		}
 
-		@Override
-		public void reset() {
-        	hasHr = false;
-        	hr = 0;
-        	hasCadence = false;
-        	cadence = 0;
-            hasSpeed = false;
-            speed = 0.0f;
-            hasPower = false;
-            power = 0.0f;
-            hasStrides = false;
-            strides = 0;
-            hasBattery = false;
-            battery = 0;
-            hasTemperature = false;
-            temperature = 0;
-		}
-		
         @Override
         public String toString() {
         	return Utils.toString(ExtraSensor.this, "    ");
         }
     }
-    
-    /**
-     * Constructs a new Location.
-     * @param provider the name of the location provider that generated this
-     * location fix.
-     */
-    public Location(String provider) {
-        super();
-        setProvider(provider);
-    }
-    
-    public Location(double lat, double lon) {
+
+	public Location() {
 		super();
+		mId = -1L;
+		provider = "";
+		time = 0L;
+		latitude = 0.0;
+		longitude = 0.0;
+		mExtraBasic = null;
+		mExtraSensor = null;
+	}
+
+    public Location(double lat, double lon) {
+		this();
 		setLatitude(lat);
 		setLongitude(lon);
 	}
 
-	/**
-	 * Use coordinate-based constructor + setProvider() instead.
-	 */
-	@Deprecated
-    public Location(String provider, double lat, double lon) {
-    	super();
-    	setProvider(provider);
-        setLatitude(lat);
-        setLongitude(lon);
-    }
-
-	/**
-	 * Empty constructor used for {@link Storable}
-	 * <br>
-	 * Do not use directly!
-	 */
-    public Location() {
-    	this("");
-    }
-    
-    public Location(DataReaderBigEndian dr) throws IOException {
-        super(dr);
-    }
-
     public Location(Location loc) {
+    	this();
         set(loc);
     }
     
-    public Location(byte[] data) throws IOException {
-        super(data);
-    }
-
     /**
      * Sets the contents of the location to the values from the given location.
 	 * @param loc source location object
@@ -361,7 +333,7 @@ public class Location extends Storable {
 		}
 	}
 	
-	private void readSensorVersion1(DataReaderBigEndian dr) throws IOException {
+	private void readSensorVersion1(DataReaderBigEndian dr) {
 		mExtraSensor = new ExtraSensor();
 		mExtraSensor.hasHr = dr.readBoolean();
 		mExtraSensor.hr = dr.readInt();
@@ -409,17 +381,6 @@ public class Location extends Storable {
 		}
 	}
 	
-    @Override
-    public void reset() {
-    	mId = -1L;
-        provider = "";
-        time = 0L;
-        latitude = 0.0;
-        longitude = 0.0;
-        mExtraBasic = null;
-        mExtraSensor = null;
-    }
-    
     /**************************************************/
     // GETTER & SETTERS
     /**************************************************/

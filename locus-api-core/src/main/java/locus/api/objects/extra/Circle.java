@@ -22,6 +22,13 @@ public class Circle extends GeoData {
 	 */
 	public Circle() {
 		super();
+
+		loc = null;
+		radius = 0.0f;
+		drawPrecise = false;
+
+		// V1
+		timeCreated = System.currentTimeMillis();
 	}
 	
 	public Circle(Location loc, float radius) throws IOException {
@@ -29,18 +36,13 @@ public class Circle extends GeoData {
 	}
 	
 	public Circle(Location loc, float radius, boolean drawPrecise) throws IOException {
-		super();
+		this();
 		this.loc = loc;
 		this.radius = radius;
 		this.drawPrecise = drawPrecise;
 		checkData();
 	}
-	
-	public Circle(byte[] data) throws IOException {
-		super(data);
-		checkData();
-	}
-	
+
 	private void checkData() throws InvalidObjectException {
 		if (loc == null) {
 			throw new InvalidObjectException("Location cannot be 'null'");
@@ -86,7 +88,8 @@ public class Circle extends GeoData {
 
 		// PRIVATE PART
 		
-		loc = new Location(dr);
+		loc = new Location();
+		loc.read(dr);
 		radius = dr.readFloat();
 		drawPrecise = dr.readBoolean();
 		
@@ -114,15 +117,5 @@ public class Circle extends GeoData {
 		
 		// version 1 extension
 		dw.writeLong(timeCreated);
-	}
-
-	@Override
-	public void reset() {
-		loc = null;
-		radius = 0.0f;
-		drawPrecise = false;
-		
-		// V1
-		timeCreated = System.currentTimeMillis();
 	}
 }

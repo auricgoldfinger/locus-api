@@ -100,6 +100,23 @@ public class GeocachingLog extends Storable {
      */
 	public GeocachingLog() {
 		super();
+
+		mId = 0;
+		mType = CACHE_LOG_TYPE_UNKNOWN;
+		mDate = 0L;
+		mFinder = "";
+		mFindersFound = 0;
+		mLogText = "";
+
+		// V1
+
+		mImages = new ArrayList<>();
+
+		// V2
+
+		mFindersId = FINDERS_ID_UNDEFINED;
+		mCooLon = 0.0;
+		mCooLat = 0.0;
 	}
 
 	/**************************************************/
@@ -344,25 +361,5 @@ public class GeocachingLog extends Storable {
         dw.writeLong(mFindersId);
         dw.writeDouble(mCooLon);
         dw.writeDouble(mCooLat);
-	}
-
-	@Override
-	public void reset() {
-		mId = 0;
-		mType = CACHE_LOG_TYPE_UNKNOWN;
-		mDate = 0L;
-		mFinder = "";
-		mFindersFound = 0;
-		mLogText = "";
-		
-		// V1
-
-		mImages = new ArrayList<>();
-
-        // V2
-
-        mFindersId = FINDERS_ID_UNDEFINED;
-        mCooLon = 0.0;
-        mCooLat = 0.0;
 	}
 }

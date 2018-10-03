@@ -26,6 +26,11 @@ public class GeocachingImage extends Storable {
 
 	public GeocachingImage() {
 		super();
+
+		mName = "";
+		mDescription = "";
+		mThumbUrl = "";
+		mUrl = "";
 	}
 	
     /**************************************************/
@@ -144,13 +149,5 @@ public class GeocachingImage extends Storable {
 		dw.writeString(mDescription);
 		dw.writeString(mThumbUrl);
 		dw.writeString(mUrl);
-	}
-
-	@Override
-	public void reset() {
-		mName = "";
-		mDescription = "";
-		mThumbUrl = "";
-		mUrl = "";
 	}
 }

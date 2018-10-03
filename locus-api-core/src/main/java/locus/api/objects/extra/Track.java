@@ -58,14 +58,35 @@ public class Track extends GeoData {
     
 	public Track() {
 		super();
-	}
-	
-	public Track(DataReaderBigEndian dr) throws IOException {
-		super(dr);
-	}
-	
-	public Track(byte[] data) throws IOException {
-		super(data);
+
+		id = -1;
+		name = "";
+		waypoints = new ArrayList<>();
+		breaks = new ArrayList<>();
+		waypoints = new ArrayList<>();
+		extraData = null;
+		styleNormal = null;
+		styleHighlight = null;
+
+		// V1
+
+		mUseFolderStyle = true;
+
+		// V2
+
+		timeCreated = System.currentTimeMillis();
+
+		// V3
+
+		mStats = new TrackStats();
+
+		// V4
+
+		setReadWriteMode(ReadWriteMode.READ_WRITE);
+
+		// V5
+
+		mActivityType = 0;
 	}
 	
     /**************************************************/
@@ -220,7 +241,8 @@ public class Track extends GeoData {
 	 */
 	public void setStats(byte[] data) {
 		try {
-			TrackStats stats = new TrackStats(data);
+			TrackStats stats = new TrackStats();
+			stats.read(data);
 			setStats(stats);
 		} catch (Exception e) {
 			Logger.logE(TAG, "setStats(" + Arrays.toString(data) + ")", e);
@@ -244,7 +266,7 @@ public class Track extends GeoData {
 		name = dr.readString();
 
 		// load locations
-		points = (List<Location>) dr.readListStorable(Location.class);
+		points = dr.readListStorable(Location.class);
 
 		// read breaks
 		int breaksSize = dr.readInt();
@@ -253,7 +275,7 @@ public class Track extends GeoData {
 		}
 
 		// read waypoints
-		waypoints = (List<Waypoint>) dr.readListStorable(Waypoint.class);
+		waypoints = dr.readListStorable(Waypoint.class);
 
 		// read extra part
 		readExtraData(dr);
@@ -261,7 +283,7 @@ public class Track extends GeoData {
 
 		// old deprecated statistics
 		// clear previous values
-		mStats.reset();
+		mStats = new TrackStats();
 
 		// read all old data
 		mStats.setNumOfPoints(dr.readInt());
@@ -301,7 +323,8 @@ public class Track extends GeoData {
 		// V3
 
 		if (version >= 3) {
-			mStats = new TrackStats(dr);
+			mStats = new TrackStats();
+			mStats.read(dr);
 		}
 
 		// V4
@@ -323,7 +346,7 @@ public class Track extends GeoData {
 		dw.writeString(name);
 
 		// write locations
-		dw.writeListStorable(points);
+		dw.writeListStorable(waypoints);
 
 		// write breaks
 		byte[] breaksData = getBreaksData();
@@ -381,37 +404,5 @@ public class Track extends GeoData {
 		// V5
 
 		dw.writeInt(mActivityType);
-	}
-
-	@Override
-	public void reset() {
-		id = -1;
-		name = "";
-		points = new ArrayList<>();
-		breaks = new ArrayList<>();
-		waypoints = new ArrayList<>();
-		extraData = null;
-		styleNormal = null;
-		styleHighlight = null;
-
-		// V1
-
-		mUseFolderStyle = true;
-
-		// V2
-
-		timeCreated = System.currentTimeMillis();
-
-		// V3
-
-		mStats = new TrackStats();
-
-		// V4
-
-		setReadWriteMode(ReadWriteMode.READ_WRITE);
-
-		// V5
-
-		mActivityType = 0;
 	}
 }

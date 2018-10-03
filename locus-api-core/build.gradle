@@ -20,7 +20,7 @@ task createJavadocJar(type: Jar, dependsOn: javadoc) {
 
 // maven parameters
 group = 'com.asamm'
-version = API_VERSION
+version = LIB_LOCUS_API
 
 //task publishMavenLocal(type: GradleBuild) {
 //    group 'Publish'
@@ -53,7 +53,7 @@ publishing {
             groupId group
             artifactId 'locus-api'
             //noinspection GroovyAssignabilityCheck
-            version API_VERSION
+            version LIB_LOCUS_API
 
             // define source
             from components.java
@@ -114,10 +114,10 @@ bintray {
 
         //noinspection GroovyAssignabilityCheck
         version {
-            name = API_VERSION
-            desc = 'Locus API, version ' + API_VERSION
+            name = LIB_LOCUS_API
+            desc = 'Locus API, version ' + LIB_LOCUS_API
             released  = new Date()
-            vcsTag = API_VERSION
+            vcsTag = LIB_LOCUS_API
         }
     }
 }

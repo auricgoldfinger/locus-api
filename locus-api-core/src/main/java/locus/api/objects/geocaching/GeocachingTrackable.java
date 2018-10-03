@@ -56,10 +56,21 @@ public class GeocachingTrackable extends Storable {
 	
 	public GeocachingTrackable() {
 		super();
-	}
-	
-	public GeocachingTrackable(byte[] data) throws IOException {
-		super(data);
+
+		mName = "";
+		mImgUrl = "";
+		mSrcDetails = "";
+
+		mOriginalOwner = "";
+		mReleased = 0L;
+		mOrigin = "";
+		mGoal = "";
+		mDetails = "";
+
+		// V1
+
+		mId = 0L;
+		mCurrentOwner = "";
 	}
 
     /**************************************************/
@@ -291,23 +302,5 @@ public class GeocachingTrackable extends Storable {
 
 		dw.writeLong(mId);
 		dw.writeString(mCurrentOwner);
-	}
-
-	@Override
-	public void reset() {
-		mName = "";
-		mImgUrl = "";
-		mSrcDetails = "";
-
-		mOriginalOwner = "";
-		mReleased = 0L;
-		mOrigin = "";
-		mGoal = "";
-		mDetails = "";
-
-		// V1
-
-		mId = 0L;
-		mCurrentOwner = "";
 	}
 }

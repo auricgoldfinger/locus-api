@@ -41,8 +41,19 @@ public class Waypoint extends GeoData {
 
 	public Waypoint(String name, Location loc) {
 		super();
+		setId(-1);
 		setName(name);
 		this.loc = loc;
+		extraData = null;
+		styleNormal = null;
+		styleHighlight = null;
+		gcData = null;
+
+		// V1
+		timeCreated = System.currentTimeMillis();
+
+		// V2
+		setReadWriteMode(ReadWriteMode.READ_WRITE);
 	}
 	
 	/**
@@ -51,15 +62,7 @@ public class Waypoint extends GeoData {
 	 * Do not use directly!
 	 */
 	public Waypoint() {
-		this("", new Location(""));
-	}
-	
-	public Waypoint(DataReaderBigEndian dr) throws IOException {
-		super(dr);
-	}
-	
-	public Waypoint(byte[] data) throws IOException {
-		super(data);
+		this("", new Location());
 	}
 	
     /*******************************************/
@@ -75,7 +78,8 @@ public class Waypoint extends GeoData {
 	protected void readObject(int version, DataReaderBigEndian dr) throws IOException {
 		setId(dr.readLong());
 		name = dr.readString();
-		loc = new Location(dr);
+		loc = new Location();
+		loc.read(dr);
 		
 		// read extra data
 		readExtraData(dr);
@@ -115,26 +119,11 @@ public class Waypoint extends GeoData {
 		dw.writeInt(getReadWriteMode().ordinal());
 	}
 
-	@Override
-	public void reset() {
-		setId(-1);
-		name = "";
-		loc = null;
-		extraData = null;
-		styleNormal = null;
-		styleHighlight = null;
-		gcData = null;
-		
-		// V1
-		timeCreated = System.currentTimeMillis();
-
-		// V2
-		setReadWriteMode(ReadWriteMode.READ_WRITE);
-	}
-	
 	public static GeocachingData readGeocachingData(DataReaderBigEndian dr) throws IOException {
 		if (dr.readBoolean()) {
-			return new GeocachingData(dr);
+			GeocachingData gcData = new GeocachingData();
+			gcData.read(dr);
+			return gcData;
 		} else {
 			return null;
 		}

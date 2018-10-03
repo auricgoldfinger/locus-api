@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import locus.api.objects.Storable;
+import locus.api.objects.StorableUtils;
 import locus.api.utils.DataReaderBigEndian;
 import locus.api.utils.DataWriterBigEndian;
 import locus.api.utils.Logger;
@@ -64,26 +65,18 @@ public class GeoDataStyle extends Storable {
 	public GeoDataStyle(String name) {
 		super();
 
+		mId = "";
+		mName = "";
+		balloonStyle = null;
+		iconStyle = null;
+		labelStyle = null;
+		listStyle = null;
+		mLineStyle = null;
+
 		// set name
 		if (name != null) {
 			this.mName = name;
 		}
-	}
-
-	/**
-	 * Create new instance of style container based on ready to use reader.
-	 * @param dr data reader with data
-	 */
-	public GeoDataStyle(DataReaderBigEndian dr) throws IOException {
-		super(dr);
-	}
-
-	/**
-	 * Create new instance of style container based on previously stored data.
-	 * @param data data of style itself
-	 */
-	public GeoDataStyle(byte[] data) throws IOException {
-		super(data);
 	}
 
     /**************************************************/
@@ -286,17 +279,16 @@ public class GeoDataStyle extends Storable {
 		public String text;
 		public DisplayMode displayMode;
 
-		@Override
-		protected int getVersion() {
-			return 0;
-		}
-
-		@Override
-		public void reset() {
+		public BalloonStyle() {
 			bgColor = WHITE;
 			textColor = BLACK;
 			text = "";
 			displayMode = DisplayMode.DEFAULT;
+		}
+
+		@Override
+		protected int getVersion() {
+			return 0;
 		}
 
 		@Override
@@ -341,7 +333,16 @@ public class GeoDataStyle extends Storable {
          * Default empty constructor.
          */
 		public IconStyle() {
-			super();
+			color = COLOR_DEFAULT;
+			mScale = 1.0f;
+			heading = 0.0f;
+			iconHref = null;
+			hotSpot = generateDefaultHotSpot();
+
+			icon = null;
+			iconW = -1;
+			iconH = -1;
+			scaleCurrent = 1.0f;
 		}
 
         // SCALE
@@ -392,20 +393,6 @@ public class GeoDataStyle extends Storable {
 		}
 
 		@Override
-		public void reset() {
-			color = COLOR_DEFAULT;
-            mScale = 1.0f;
-			heading = 0.0f;
-			iconHref = null;
-			hotSpot = generateDefaultHotSpot();
-			
-			icon = null;
-			iconW = -1;
-			iconH = -1;
-			scaleCurrent = 1.0f;
-		}
-
-		@Override
 		protected void readObject(int version, DataReaderBigEndian dr)
 				throws IOException {
 			color = dr.readInt();
@@ -453,6 +440,11 @@ public class GeoDataStyle extends Storable {
 		// scale of label
 		private float mScale = 1.0f;
 
+		public LabelStyle() {
+			mColor = COLOR_DEFAULT;
+			mScale = 1.0f;
+		}
+
 		/**
 		 * Get color defined for a label.
 		 * @return color of label
@@ -496,12 +488,6 @@ public class GeoDataStyle extends Storable {
 		}
 
 		@Override
-		public void reset() {
-			mColor = COLOR_DEFAULT;
-			mScale = 1.0f;
-		}
-
-		@Override
 		protected void readObject(int version, DataReaderBigEndian dr)
 				throws IOException {
 			mColor = dr.readInt();
@@ -535,16 +521,15 @@ public class GeoDataStyle extends Storable {
 		public int bgColor = WHITE;
 		public ArrayList<ItemIcon> itemIcons = new ArrayList<>();
 
-		@Override
-		protected int getVersion() {
-			return 0;
-		}
-
-		@Override
-		public void reset() {
+		public ListStyle() {
 			listItemType = ListItemType.CHECK;
 			bgColor = WHITE;
 			itemIcons = new ArrayList<>();
+		}
+
+		@Override
+		protected int getVersion() {
+			return 0;
 		}
 
 		@Override
@@ -659,6 +644,20 @@ public class GeoDataStyle extends Storable {
 		 */
 		public LineStyleOld() {
 			super();
+			mObjectVersion = getVersion();
+			color = COLOR_DEFAULT;
+			mWidth = 1.0f;
+			gxOuterColor = COLOR_DEFAULT;
+			gxOuterWidth = 0.0f;
+			gxPhysicalWidth = 0.0f;
+			gxLabelVisibility = false;
+
+			// Locus extension
+			colorStyle = ColorStyle.SIMPLE;
+			units = Units.PIXELS;
+			lineType = LineType.NORMAL;
+			drawOutline = false;
+			colorOutline = WHITE;
 		}
 
 		// WIDTH
@@ -705,24 +704,6 @@ public class GeoDataStyle extends Storable {
 		}
 
 		@Override
-		public void reset() {
-			mObjectVersion = getVersion();
-			color = COLOR_DEFAULT;
-			mWidth = 1.0f;
-			gxOuterColor = COLOR_DEFAULT;
-			gxOuterWidth = 0.0f;
-			gxPhysicalWidth = 0.0f;
-			gxLabelVisibility = false;
-
-			// Locus extension
-			colorStyle = ColorStyle.SIMPLE;
-			units = Units.PIXELS;
-			lineType = LineType.NORMAL;
-			drawOutline = false;
-			colorOutline = WHITE;
-		}
-
-		@Override
 		protected void readObject(int version, DataReaderBigEndian dr)
 				throws IOException {
 			mObjectVersion = version;
@@ -766,17 +747,16 @@ public class GeoDataStyle extends Storable {
 		public int color = COLOR_DEFAULT;
 		public boolean fill = true;
 		public boolean outline = true;
-		
-		@Override
-		protected int getVersion() {
-			return 0;
-		}
 
-		@Override
-		public void reset() {
+		public PolyStyleOld() {
 			color = COLOR_DEFAULT;
 			fill = true;
 			outline = true;
+		}
+
+		@Override
+		protected int getVersion() {
+			return 0;
 		}
 
 		@Override
@@ -803,17 +783,6 @@ public class GeoDataStyle extends Storable {
     }
 
     @Override
-    public void reset() {
-        mId = "";
-		mName = "";
-        balloonStyle = null;
-        iconStyle = null;
-        labelStyle = null;
-        listStyle = null;
-		mLineStyle = null;
-    }
-
-    @Override
     protected void readObject(int version, DataReaderBigEndian dr)
             throws IOException {
         // read core
@@ -830,22 +799,22 @@ public class GeoDataStyle extends Storable {
 		PolyStyleOld polyStyleOld = null;
         try {
             if (dr.readBoolean()) {
-                balloonStyle = Storable.read(BalloonStyle.class, dr);
+                balloonStyle = StorableUtils.read(BalloonStyle.class, dr);
             }
             if (dr.readBoolean()) {
-                iconStyle = Storable.read(IconStyle.class, dr);
+                iconStyle = StorableUtils.read(IconStyle.class, dr);
             }
             if (dr.readBoolean()) {
-                labelStyle = Storable.read(LabelStyle.class, dr);
+                labelStyle = StorableUtils.read(LabelStyle.class, dr);
             }
             if (dr.readBoolean()) {
-				lineStyleOld = Storable.read(LineStyleOld.class, dr);
+				lineStyleOld = StorableUtils.read(LineStyleOld.class, dr);
             }
             if (dr.readBoolean()) {
-                listStyle = Storable.read(ListStyle.class, dr);
+                listStyle = StorableUtils.read(ListStyle.class, dr);
             }
             if (dr.readBoolean()) {
-				polyStyleOld = Storable.read(PolyStyleOld.class, dr);
+				polyStyleOld = StorableUtils.read(PolyStyleOld.class, dr);
             }
         } catch (Exception e) {
             e.printStackTrace();

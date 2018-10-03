@@ -201,21 +201,54 @@ public class GeocachingData extends Storable {
 	 */
 	public GeocachingData() {
 		super();
+
+		mId = 0;
+		mCacheID = "";
+		mAvailable = true;
+		mArchived = false;
+		mPremiumOnly = false;
+		mName = "";
+		mDateUpdated = 0L;
+		mDateHidden = 0L;
+		mPlacedBy = "";
+		mOwner = "";
+		mDatePublished = 0L;
+		mType = CACHE_TYPE_TRADITIONAL;
+		mContainer = CACHE_SIZE_NOT_CHOSEN;
+		mDifficulty = -1.0f;
+		mTerrain = -1.0f;
+		mCountry = "";
+		mState = "";
+		mDescBytes = null;
+		mShortDescLength = 0;
+		mEncodedHints = "";
+		attributes = new ArrayList<>();
+		logs = new ArrayList<>();
+		trackables = new ArrayList<>();
+		waypoints = new ArrayList<>();
+		mNotes = "";
+		mComputed = false;
+		mFound = false;
+		mCacheUrl = "";
+		mFavoritePoints = -1;
+
+		// V1
+
+		mGcVoteNumOfVotes = -1;
+		mGcVoteAverage = 0.0f;
+		mGcVoteUserVote = 0.0f;
+
+		// V2
+
+		mLonOriginal = 0.0;
+		mLatOriginal = 0.0;
+		mImages = new ArrayList<>();
+
+		// V3
+
+		mSource = CACHE_SOURCE_UNDEFINED;
 	}
-	
-	/**
-	 * Constructor used for deserialization from previous state
-	 * @param data source data for storable object
-	 * @throws IOException
-	 */
-	public GeocachingData(byte[] data) throws IOException {
-		super(data);
-	}
-	
-	public GeocachingData(DataReaderBigEndian dr) throws IOException {
-		super(dr);
-	}
-	
+
     /**************************************************/
     // PARAMETERS
 	/**************************************************/
@@ -974,55 +1007,6 @@ public class GeocachingData extends Storable {
 		// V3
 
 		dw.writeInt(mSource);
-	}
-
-	@Override
-	public void reset() {
-		mId = 0;
-		mCacheID = "";
-		mAvailable = true;
-		mArchived = false;
-		mPremiumOnly = false;
-		mName = "";
-		mDateUpdated = 0L;
-		mDateHidden = 0L;
-		mPlacedBy = "";
-		mOwner = "";
-		mDatePublished = 0L;
-		mType = CACHE_TYPE_TRADITIONAL;
-		mContainer = CACHE_SIZE_NOT_CHOSEN;
-		mDifficulty = -1.0f;
-		mTerrain = -1.0f;
-		mCountry = "";
-		mState = "";
-		mDescBytes = null;
-		mShortDescLength = 0;
-		mEncodedHints = "";
-		attributes = new ArrayList<>();
-		logs = new ArrayList<>();
-		trackables = new ArrayList<>();
-		waypoints = new ArrayList<>();
-		mNotes = "";
-		mComputed = false;
-		mFound = false;
-		mCacheUrl = "";
-		mFavoritePoints = -1;
-		
-		// V1
-
-		mGcVoteNumOfVotes = -1;
-		mGcVoteAverage = 0.0f;
-		mGcVoteUserVote = 0.0f;
-		
-		// V2
-
-		mLonOriginal = 0.0;
-		mLatOriginal = 0.0;
-		mImages = new ArrayList<>();
-
-		// V3
-
-		mSource = CACHE_SOURCE_UNDEFINED;
 	}
 
 	/**************************************************/

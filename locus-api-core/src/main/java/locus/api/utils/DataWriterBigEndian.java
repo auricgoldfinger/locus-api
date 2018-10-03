@@ -175,7 +175,14 @@ public class DataWriterBigEndian {
         System.arraycopy(b, off, mBuf, mCurrentPos, len);
         setNewPositions(len);
     }
-    
+
+    /**
+     * Write single byte to stream.
+     */
+    public final void writeByte(byte b) {
+        write(b);
+    }
+
     /**
      * Writes a <code>boolean</code> to the underlying output stream as
      * a 1-byte value. The value <code>true</code> is written out as the

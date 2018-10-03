@@ -357,10 +357,7 @@ public class GeoDataExtra extends Storable {
 
 	public GeoDataExtra() {
 		super();
-	}
-	
-	public GeoDataExtra(byte[] data) throws IOException {
-		super(data);
+		parameters = new SparseArrayCompat<>();
 	}
 	
     /*******************************************/
@@ -397,11 +394,6 @@ public class GeoDataExtra extends Storable {
 		}
 	}
 
-	@Override
-	public void reset() {
-		parameters = new SparseArrayCompat<>();
-	}
-	
     /**************************************************/
     // HANDLERS PART
     /**************************************************/

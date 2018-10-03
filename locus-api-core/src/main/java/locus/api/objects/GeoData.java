@@ -91,16 +91,6 @@ public abstract class GeoData extends Storable {
 		setBasics();
 	}
 	
-	public GeoData(DataReaderBigEndian dr) throws IOException {
-		super(dr);
-		setBasics();
-	}
-	
-	public GeoData(byte[] data) throws IOException {
-		super(data);
-		setBasics();
-	}
-
 	/**
 	 * Set basic parameters.
 	 */
@@ -207,10 +197,12 @@ public abstract class GeoData extends Storable {
 	
 	protected void readStyles(DataReaderBigEndian dr) throws IOException {
 		if (dr.readBoolean()) {
-			styleNormal = new GeoDataStyle(dr);
+			styleNormal = new GeoDataStyle();
+			styleNormal.read(dr);
 		}
 		if (dr.readBoolean()) {
-			styleHighlight = new GeoDataStyle(dr);
+			styleHighlight = new GeoDataStyle();
+			styleHighlight.read(dr);
 		}
 	}
 	
