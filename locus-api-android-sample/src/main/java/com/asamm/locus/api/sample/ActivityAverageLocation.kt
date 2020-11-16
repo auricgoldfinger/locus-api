@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentActivity
 import locus.api.android.utils.IntentHelper
 import locus.api.objects.extra.Location
 import locus.api.utils.Logger
-import kotlin.random.Random
 
 
 class ActivityAverageLocation : FragmentActivity() {
@@ -23,7 +22,11 @@ class ActivityAverageLocation : FragmentActivity() {
     private var latitudeList = mutableListOf<Double>()
     private var longitudeList = mutableListOf<Double>()
     private var altitudeList = mutableListOf<Double>()
-    var txtLocationStatus : TextView? = null
+    var txtAvgLat : TextView? = null
+    var txtAvgLon : TextView? = null
+    var txtAvgAlt : TextView? = null
+    var txtAvgPoints : TextView? = null
+    var txtLastLocation : TextView? = null
 
     //define the listener
     private val locationListener: LocationListener = object : LocationListener {
@@ -37,38 +40,13 @@ class ActivityAverageLocation : FragmentActivity() {
                 val altitude = location.altitude
                 altitudeList.add(altitude);
 
-                txtLocationStatus!!.text = ("(${latitudeList.size} pt) ${location.latitude} , ${location.longitude}")
-                Logger.logD(TAG, "Added latitude: $latitude, longitude: $longitude, altitude $altitude")
-
-                Logger.logD(TAG, "Now available: ${latitudeList.size} positions")
-
-//            if(locationCounter == COUNTERRESET){
-//
-//                for(int i = 0; i < latitudeList.size();i++){
-//                    latitudeAverage = latitudeAverage + latitudeList.get(i);
-//                    longitudeAverage = longitudeAverage + longitudeList.get(i);
-//                    altitudeAverage = altitudeAverage + altitudeList.get(i);
-//                }
-//
-//                latitudeAverage = latitudeAverage / latitudeList.size();
-//                longitudeAverage = longitudeAverage / longitudeList.size();
-//                altitudeAverage = altitudeAverage / altitudeList.size();
-//
-//                locationUpdate = new Location(bestProvider);
-//                location.setLatitude(latitudeAverage);
-//                location.setLongitude(longitudeAverage);
-//                location.setAltitude(altitudeAverage);
-//
-//                **HERE I WANT TO SET LOCATION UPDATE AS MY GPS POSITION**
-//
-//                locationCounter = 0;
-//                latitudeAverage = 0;
-//                longitudeAverage = 0;
-//                altitudeAverage = 0;
-//                latitudeList.clear();
-//                longitudeList.clear();
-//                altitudeList.clear();
-//            }
+                txtLastLocation!!.text = ("${location.latitude} , ${location.longitude} (${location.altitude}m)")
+                txtAvgLat!!.text = "${latitudeList.average()}"
+                txtAvgLon!!.text = "${longitudeList.average()}"
+                txtAvgAlt!!.text = "${altitudeList.average()}m"
+                txtAvgPoints!!.text = "${latitudeList.size} points"
+                Logger.logD(TAG, "\n\tAdded latitude: $latitude, longitude: $longitude, altitude $altitude" +
+                        "\n\tAvg (${latitudeList.size}pt) ${latitudeList.average()}, ${longitudeList.average()} (${altitudeList.average()}m)")
             }
         }
         override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
@@ -84,27 +62,33 @@ class ActivityAverageLocation : FragmentActivity() {
 
         setContentView(R.layout.activity_average_location)
 
-        txtLocationStatus = findViewById(R.id.txtAvgLocation)
+        txtLastLocation = findViewById(R.id.txtLastPosition)
+        txtAvgLat = findViewById(R.id.txtAvgLat)
+        txtAvgLon = findViewById(R.id.txtAvgLon)
+        txtAvgAlt = findViewById(R.id.txtAvgAlt)
+        txtAvgPoints = findViewById(R.id.txtAvgPoints)
+
         val button: Button = findViewById(R.id.btnSetLocation)
         button.setOnClickListener {
             // stop listening for location
             stopLocationGathering()
 
+            val avgLat = latitudeList.average()
+            val avgLon = longitudeList.average()
+            val avgAlt = altitudeList.average()
+
+            Logger.logI(TAG, "Average after ${latitudeList.size} points: $avgLat, $avgLon - ${avgAlt}m")
+
             IntentHelper.sendGetLocationData(this@ActivityAverageLocation,
-                    "Non-sense Loc ;)",
+                    "$avgLon, $avgLat",
                     Location().apply {
-                        latitude = latitudeList.average()
-                        longitude = longitudeList.average()
+                        latitude = avgLat
+                        longitude = avgLon
                         hasAltitude = true
-                        altitude = altitudeList.average()
+                        altitude = avgAlt
                     })
             finish()
         }
-//        button.setOnClickListener(object : View.OnClickListener() {
-//            override fun onClick(v: View?) {
-//                // Code here executes on main thread after user presses button
-//            }
-//        })
 
         // finally check intent that started this sample
         startLocationGathering()
@@ -131,14 +115,13 @@ class ActivityAverageLocation : FragmentActivity() {
             Logger.logD(TAG, "bestProvider: $bestProvider")
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return
+
+                // Request access
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this@ActivityAverageLocation, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    ActivityCompat.requestPermissions(this@ActivityAverageLocation, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+                } else {
+                    ActivityCompat.requestPermissions(this@ActivityAverageLocation, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+                }
             }
             locationManager!!.requestLocationUpdates(bestProvider, 2000L, 0F, locationListener)
         }
