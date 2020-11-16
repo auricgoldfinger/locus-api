@@ -59,6 +59,32 @@ allprojects {
 //        }
 //    }
 //}
+ext {
+    readPasswords = { final p ->
+        final Properties props = new Properties()
+        final def propFile = new File('signing.properties')
+
+        print "\treading password from file "
+        println propFile.absolutePath
+
+        if (propFile.canRead()) {
+            props.load(new FileInputStream(propFile))
+        }
+
+        if (!props.containsKey('STORE_PASSWORD')) {
+            final def storepw = new String(System.console().readPassword("\n\n\t\$ Waiting for your store password: "))
+            props['STORE_PASSWORD'] = storepw
+        }
+
+        if (!props.containsKey('KEY_PASSWORD')) {
+            final def keypw = new String(System.console().readPassword("\n\n\t\$ Waiting for your key password: "))
+            props['KEY_PASSWORD'] = keypw
+        }
+
+        return props
+    }
+}
+final Properties signingProperties = readPasswords();
 
 configure([
         project(":locus-api-android-sample")]) {
@@ -100,24 +126,11 @@ configure([
 
         // signing of versions
         signingConfigs {
-            debug {
-                // Use the environment variable if it exists, otherwise use an empty string
-                def androidSignDebug = System.getenv('ANDROID_SIGN_DEBUG') ?: ""
-                if (androidSignDebug.length() > 0) {
-                    storeFile file(androidSignDebug.split("\\|")[0])
-                    storePassword androidSignDebug.split("\\|")[1]
-                    keyAlias androidSignDebug.split("\\|")[2]
-                    keyPassword androidSignDebug.split("\\|")[3]
-                }
-            }
             release {
-                def androidSignRelease = System.getenv('ANDROID_SIGN_RELEASE') ?: ""
-                if (androidSignRelease.length() > 0) {
-                    storeFile file(androidSignRelease.split("\\|")[0])
-                    storePassword androidSignRelease.split("\\|")[1]
-                    keyAlias androidSignRelease.split("\\|")[2]
-                    keyPassword androidSignRelease.split("\\|")[3]
-                }
+                storeFile file(signingProperties['STORE_FILE'])
+                storePassword signingProperties['STORE_PASSWORD']
+                keyAlias signingProperties['KEY_ALIAS']
+                keyPassword signingProperties['KEY_PASSWORD']
             }
         }
 
