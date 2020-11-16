@@ -58,7 +58,7 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
                 if (pt == null) {
                     Toast.makeText(this@ActivityClearGCFoundStatus, "Wrong INTENT - no point!", Toast.LENGTH_SHORT).show()
                 } else if (pt.gcData != null) {
-                    handleResult(clearFoundStatus(pt, lv), pt)
+                    logResult(clearFoundStatus(pt, lv), pt) { _: Int, _: Point, msg: String -> Toast.makeText(this@ActivityClearGCFoundStatus, msg, Toast.LENGTH_SHORT).show() }
                 }
             } catch (e: Exception) {
                 Logger.logE(TAG, "handle point tools", e)
@@ -79,7 +79,7 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
         finish()
     }
 
-    private fun clearFoundStatus(pt: Point, lv: LocusVersion):Int {
+    private fun clearFoundStatus(pt: Point, lv: LocusVersion): Int {
         var result = NO_GEOCACHE
 
         if (pt.gcData != null) {
@@ -155,7 +155,7 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
                         lastCache = pt.gcData!!.cacheID + ": " + pt.name
                     }
 
-                    handleResult(result, pt)
+                    logResult(result, pt) { _: Int, _: Point, _: String -> run {} }
                 }
             } catch (e: Exception) {
                 Logger.logE(TAG, "loadPointsFromLocus($ptsIds)", e)
@@ -165,44 +165,45 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
         if (clearCount == 1) {
             Toast.makeText(this@ActivityClearGCFoundStatus, "Found status cleared for '$lastCache'", Toast.LENGTH_SHORT).show()
         } else if (clearCount > 1)
-            Toast.makeText(this@ActivityClearGCFoundStatus, "Found status cleared for for '$lastCache' and  ${clearCount - 1} others", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@ActivityClearGCFoundStatus, "Found status cleared for '$lastCache' and  ${clearCount - 1} others", Toast.LENGTH_LONG).show()
         else
             Logger.logW(TAG, "No GC Found-statusses were cleared")
     }
 
-    private fun handleResult(result:Int, pt:Point) {
+    private fun logResult(result: Int, pt: Point, s: (Int, Point, String) -> Unit) {
+        var msg = ""
         when (result) {
             NO_GEOCACHE -> {
-                val msg = "'${pt.name} isn't a geocache, so I can't clear its found state either"
+                msg = "'${pt.name} isn't a geocache, so I can't clear its found state either"
                 Logger.logE(TAG, msg)
             }
             STATUS_CLEARED -> {
-                val msg = "GC Found-status cleared for ${pt.gcData!!.cacheID}: ${pt.name}"
+                msg = "GC Found-status cleared for ${pt.gcData!!.cacheID}: ${pt.name}"
                 Logger.logI(TAG, msg)
-                Toast.makeText(this@ActivityClearGCFoundStatus, msg, Toast.LENGTH_SHORT).show()
             }
             STATUS_ALREADY_CLEARED -> {
-                val msg = "GC-Found status was already cleared for ${pt.gcData!!.cacheID}: ${pt.name}"
+                msg = "GC-Found status was already cleared for ${pt.gcData!!.cacheID}: ${pt.name}"
                 Logger.logI(TAG, msg)
             }
             ERROR_WHILE_CLEARING_STATUS -> {
-                val msg = "Found status NOT cleared for ${pt.name}"
-                Toast.makeText(this@ActivityClearGCFoundStatus, "ERROR: " + msg, Toast.LENGTH_SHORT).show()
+                msg = "Found status NOT cleared for ${pt.name}"
                 Logger.logE(TAG, msg)
             }
-            FIELDNOTE_AVAILABLE_STATUS_FIXED-> {
-                Toast.makeText(this@ActivityClearGCFoundStatus, "Fieldnote found, marked '${pt.name}' as found", Toast.LENGTH_SHORT).show()
-                Logger.logI(TAG, "Fieldnote found in ${pt.gcData!!.cacheID}: ${pt.name}, but cache is not marked as found. Fixed")
+            FIELDNOTE_AVAILABLE_STATUS_FIXED -> {
+                msg = "Fieldnote found in ${pt.gcData!!.cacheID}: ${pt.name}, but cache is not marked as found. Fixed"
+                Logger.logI(TAG, msg)
             }
-            FIELDNOTE_AVAILABLE_STATUS_NOT_FIXED-> Logger.logW(TAG, "Fieldnote found in ${pt.gcData!!.cacheID}: ${pt.name}, but cache is not marked as found. Couldn't fix it. Ah well...");
+            FIELDNOTE_AVAILABLE_STATUS_NOT_FIXED -> {
+                msg = "Fieldnote found in ${pt.gcData!!.cacheID}: ${pt.name}, but cache is not marked as found. Couldn't fix it. Ah well..."
+                Logger.logW(TAG, msg)
+            }
             FIELDNOTE_AVAILABLE_STATUS_NOT_CLEARED -> {
-                val msg = "There's a field note in '${pt.gcData!!.cacheID}: ${pt.name}' so I'm not updating the found status"
-                Toast.makeText(this@ActivityClearGCFoundStatus, msg, Toast.LENGTH_SHORT).show()
+                msg = "There's a field note in '${pt.gcData!!.cacheID}: ${pt.name}' so I'm not updating the found status"
                 Logger.logW(TAG, msg)
             }
         }
+        s(result, pt, msg)
     }
-
 
     companion object {
 
