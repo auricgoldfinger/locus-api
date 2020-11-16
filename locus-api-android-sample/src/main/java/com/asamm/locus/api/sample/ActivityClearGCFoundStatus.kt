@@ -12,6 +12,7 @@ import locus.api.android.objects.LocusVersion
 import locus.api.android.utils.IntentHelper
 import locus.api.android.utils.LocusUtils
 import locus.api.objects.geoData.Point
+import locus.api.objects.geocaching.GeocachingLog
 import locus.api.utils.Logger
 
 class ActivityClearGCFoundStatus : FragmentActivity() {
@@ -84,7 +85,13 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
         if (pt.gcData != null) {
             // This is a cache. Are there field notes?
             val fieldnotes = FieldNotesHelper.get(this@ActivityClearGCFoundStatus, lv, pt.gcData!!.cacheID)
-            if (fieldnotes.size == 0 && pt.gcData!!.isFound) {
+            var fieldnoteFound = false
+            for (fieldnote in fieldnotes) {
+                if (fieldnote.type == GeocachingLog.CACHE_LOG_TYPE_FOUND) {
+                    fieldnoteFound = true
+                }
+            }
+            if (!fieldnoteFound && pt.gcData!!.isFound) {
                 // No fieldnotes but cache is marked as found. Clear it.
 
                 //        pt.location.latitude = pt.location.latitude + 0.001
@@ -102,7 +109,7 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
                 } else {
                     result = ERROR_WHILE_CLEARING_STATUS
                 }
-            } else if (fieldnotes.size > 0 && !pt.gcData!!.isFound) {
+            } else if (fieldnoteFound && !pt.gcData!!.isFound) {
                 // Fieldnotes found, but cache isn't set to found. Fixing...
                 pt.gcData!!.isFound = true
                 if (ActionBasics.updatePoint(this@ActivityClearGCFoundStatus, lv, pt, true) == 1) {
@@ -111,7 +118,7 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
                     result = FIELDNOTE_AVAILABLE_STATUS_NOT_FIXED
                 }
             } else {
-                if (fieldnotes.size > 0) result = FIELDNOTE_AVAILABLE_STATUS_NOT_CLEARED
+                if (fieldnoteFound) result = FIELDNOTE_AVAILABLE_STATUS_NOT_CLEARED
                 else result = STATUS_ALREADY_CLEARED
 
 //                Toast.makeText(this@ActivityClearGCFoundStatus, "Toggle found status of ${pt.gcData!!.cacheID} ${pt.name}", Toast.LENGTH_SHORT).show()
