@@ -5,6 +5,8 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="com.asamm.locus.permission.READ_GEOCACHING_DATA" />
     <uses-permission android:name="com.asamm.locus.permission.WRITE_GEOCACHING_DATA" />
 
@@ -25,11 +27,6 @@
 
             <!-- MENU ITEMS -->
 
-            <!-- thanks to this, app appear in list of available locations -->
-            <intent-filter>
-                <action android:name="locus.api.android.INTENT_ITEM_GET_LOCATION" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
 
             <!-- thanks to this, app appear in sub-menu of every point -->
             <intent-filter>
@@ -87,6 +84,14 @@
                 <action android:name="locus.api.android.INTENT_ITEM_POINTS_SCREEN_TOOLS" />
                 <category android:name="android.intent.category.DEFAULT" />
 
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".ActivityAverageLocation" android:label="Average" android:icon="@drawable/ic_average_location">
+            <!-- thanks to this, app appear in list of available locations -->
+            <intent-filter >
+                <action android:name="locus.api.android.INTENT_ITEM_GET_LOCATION" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
