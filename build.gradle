@@ -56,6 +56,32 @@ allprojects {
 //        }
 //    }
 //}
+ext {
+    readPasswords = { final p ->
+        final Properties props = new Properties()
+        final def propFile = new File('signing.properties')
+
+        print "\treading password from file "
+        println propFile.absolutePath
+
+        if (propFile.canRead()) {
+            props.load(new FileInputStream(propFile))
+        }
+
+        if (!props.containsKey('STORE_PASSWORD')) {
+            final def storepw = new String(System.console().readPassword("\n\n\t\$ Waiting for your store password: "))
+            props['STORE_PASSWORD'] = storepw
+        }
+
+        if (!props.containsKey('KEY_PASSWORD')) {
+            final def keypw = new String(System.console().readPassword("\n\n\t\$ Waiting for your key password: "))
+            props['KEY_PASSWORD'] = keypw
+        }
+
+        return props
+    }
+}
+final Properties signingProperties = readPasswords();
 
 configure([
         project(":locus-api-android-sample")]) {
@@ -97,17 +123,11 @@ configure([
 
         // signing of versions
         signingConfigs {
-            debug {
-                storeFile file(System.getenv('ANDROID_SIGN_DEBUG').split("\\|")[0])
-                storePassword System.getenv('ANDROID_SIGN_DEBUG').split("\\|")[1]
-                keyAlias System.getenv('ANDROID_SIGN_DEBUG').split("\\|")[2]
-                keyPassword System.getenv('ANDROID_SIGN_DEBUG').split("\\|")[3]
-            }
             release {
-                storeFile file(System.getenv('ANDROID_SIGN_RELEASE').split("\\|")[0])
-                storePassword System.getenv('ANDROID_SIGN_RELEASE').split("\\|")[1]
-                keyAlias System.getenv('ANDROID_SIGN_RELEASE').split("\\|")[2]
-                keyPassword System.getenv('ANDROID_SIGN_RELEASE').split("\\|")[3]
+                storeFile file(signingProperties['STORE_FILE'])
+                storePassword signingProperties['STORE_PASSWORD']
+                keyAlias signingProperties['KEY_ALIAS']
+                keyPassword signingProperties['KEY_PASSWORD']
             }
         }
 
