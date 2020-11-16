@@ -56,10 +56,10 @@
             </intent-filter>
 
             <!-- thanks to this, app appear in points screen - tools button -->
-            <intent-filter>
-                <action android:name="locus.api.android.INTENT_ITEM_POINTS_SCREEN_TOOLS" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            <!--            <intent-filter>-->
+            <!--                <action android:name="locus.api.android.INTENT_ITEM_POINTS_SCREEN_TOOLS" />-->
+            <!--                <category android:name="android.intent.category.DEFAULT" />-->
+            <!--            </intent-filter>-->
 
             <!-- thanks to this, app can handle incoming locations -->
             <intent-filter>
@@ -69,11 +69,11 @@
         </activity>
 
         <activity
-            android:name=".ActivityGeocacheTools"
-            android:label="GeocachingTools">
+            android:name=".ActivityClearGCFoundStatus"
+            android:label="Clear Found Status">
 
             <!-- thanks to this, app appear in sub-menu of only geocache! -->
-            <intent-filter>
+            <intent-filter android:icon="@drawable/ic_clear_gc_found_status">
                 <action android:name="locus.api.android.INTENT_ITEM_POINT_TOOLS" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -83,7 +83,13 @@
                     android:path="/point_geocache"
                     android:scheme="locus" />
             </intent-filter>
+            <intent-filter android:icon="@drawable/ic_clear_gc_found_status">
+                <action android:name="locus.api.android.INTENT_ITEM_POINTS_SCREEN_TOOLS" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+            </intent-filter>
         </activity>
+
         <activity android:name=".ActivityDashboard" />
 
         <!-- receiver for handling of exported tracks -->
