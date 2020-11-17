@@ -59,13 +59,22 @@ allprojects {
 ext {
     readPasswords = { final p ->
         final Properties props = new Properties()
-        final def propFile = new File('signing.properties')
+        final def propFile = new File(projectDir,'signing.properties')
 
-        print "\treading password from file "
-        println propFile.absolutePath
+        logger.lifecycle("\treading password from file {}",propFile.absolutePath)
 
         if (propFile.canRead()) {
             props.load(new FileInputStream(propFile))
+            logger.lifecycle("\tpassword info read from properties file")
+
+            if (props['STORE_FILE']) {
+                logger.lifecycle("\tUsing store file {}", props['STORE_FILE'])
+            } else {
+                logger.error("\tSTORE_FILE property not found")
+            }
+
+        } else {
+            logger.error("\tProperties file couldn't be read")
         }
 
         return props
@@ -118,12 +127,14 @@ configure([
                 storePassword signingProperties['STORE_PASSWORD']
                 keyAlias signingProperties['KEY_ALIAS_DEBUG']
                 keyPassword signingProperties['KEY_PASSWORD_DEBUG']
+                v2SigningEnabled true
             }
             release {
                 storeFile file(signingProperties['STORE_FILE'])
                 storePassword signingProperties['STORE_PASSWORD']
                 keyAlias signingProperties['KEY_ALIAS_RELEASE']
                 keyPassword signingProperties['KEY_PASSWORD_RELEASE']
+                v2SigningEnabled true
             }
         }
 
