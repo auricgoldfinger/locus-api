@@ -52,12 +52,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
-            <!-- thanks to this, app appear in points screen - tools button -->
-            <!--            <intent-filter>-->
-            <!--                <action android:name="locus.api.android.INTENT_ITEM_POINTS_SCREEN_TOOLS" />-->
-            <!--                <category android:name="android.intent.category.DEFAULT" />-->
-            <!--            </intent-filter>-->
-
             <!-- thanks to this, app can handle incoming locations -->
             <intent-filter>
                 <action android:name="locus.api.android.ACTION_RECEIVE_LOCATION" />
@@ -80,10 +74,11 @@
                     android:path="/point_geocache"
                     android:scheme="locus" />
             </intent-filter>
+
+            <!-- thanks to this, app appear in points screen - tools button -->
             <intent-filter android:icon="@drawable/ic_clear_gc_found_status">
                 <action android:name="locus.api.android.INTENT_ITEM_POINTS_SCREEN_TOOLS" />
                 <category android:name="android.intent.category.DEFAULT" />
-
             </intent-filter>
         </activity>
 
