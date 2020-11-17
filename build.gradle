@@ -68,16 +68,6 @@ ext {
             props.load(new FileInputStream(propFile))
         }
 
-        if (!props.containsKey('STORE_PASSWORD')) {
-            final def storepw = new String(System.console().readPassword("\n\n\t\$ Waiting for your store password: "))
-            props['STORE_PASSWORD'] = storepw
-        }
-
-        if (!props.containsKey('KEY_PASSWORD')) {
-            final def keypw = new String(System.console().readPassword("\n\n\t\$ Waiting for your key password: "))
-            props['KEY_PASSWORD'] = keypw
-        }
-
         return props
     }
 }
@@ -123,11 +113,17 @@ configure([
 
         // signing of versions
         signingConfigs {
+            debug {
+                storeFile file(signingProperties['STORE_FILE'])
+                storePassword signingProperties['STORE_PASSWORD']
+                keyAlias signingProperties['KEY_ALIAS_DEBUG']
+                keyPassword signingProperties['KEY_PASSWORD_DEBUG']
+            }
             release {
                 storeFile file(signingProperties['STORE_FILE'])
                 storePassword signingProperties['STORE_PASSWORD']
-                keyAlias signingProperties['KEY_ALIAS']
-                keyPassword signingProperties['KEY_PASSWORD']
+                keyAlias signingProperties['KEY_ALIAS_RELEASE']
+                keyPassword signingProperties['KEY_PASSWORD_RELEASE']
             }
         }
 
