@@ -10,14 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="10dp"
-        android:text="last" />
+        android:text="..." />
 
     <TextView
         android:id="@+id/txtAvgLat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="10dp"
-        android:text="avg"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView
@@ -25,7 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="10dp"
-        android:text="avg"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView
@@ -33,7 +31,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="10dp"
-        android:text="avg"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <TextView
@@ -41,7 +38,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="10dp"
-        android:text="avg"
         android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
     <Button
