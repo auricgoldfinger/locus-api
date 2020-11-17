@@ -56,6 +56,7 @@ allprojects {
 //        }
 //    }
 //}
+
 ext {
     readPasswords = { final p ->
         final Properties props = new Properties()
@@ -63,6 +64,22 @@ ext {
 
         logger.lifecycle("\treading password from file {}",propFile.absolutePath)
 
+        if (!propFile.exists()) {
+            // create properties file
+            logger.error("signing.properties doesn't exist, creating dummy file")
+            logger.error("Please enter the values and retry")
+
+            props.setProperty("STORE_FILE","enter path to keystore")
+            props.setProperty("STORE_PASSWORD","enter keystore password")
+            props.setProperty("KEY_ALIAS_DEBUG","enter debug key alias")
+            props.setProperty("KEY_PASSWORD_DEBUG","enter debug key password")
+            props.setProperty("KEY_ALIAS_RELEASE","enter release key alias")
+            props.setProperty("KEY_PASSWORD_RELEASE","enter release key password")
+
+            props.store(new FileOutputStream(propFile), null)
+
+            logger.error("{} created", propFile.absolutePath)
+        }
         if (propFile.canRead()) {
             props.load(new FileInputStream(propFile))
             logger.lifecycle("\tpassword info read from properties file")
