@@ -170,7 +170,7 @@ class MapFragment : DialogFragment() {
         loader?.start()
     }
 
-    inner class MapView(ctx: Context) : ImageView(ctx) {
+    inner class MapView(ctx: Context) : androidx.appcompat.widget.AppCompatImageView(ctx) {
 
         // map image to draw
         var img: Bitmap? = null

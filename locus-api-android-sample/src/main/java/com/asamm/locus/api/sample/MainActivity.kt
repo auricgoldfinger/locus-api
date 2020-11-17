@@ -237,6 +237,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         Logger.logD(TAG, "onActivityResult($requestCode, $resultCode, $data)")
         if (requestCode == RC_A) {
             // pick file
