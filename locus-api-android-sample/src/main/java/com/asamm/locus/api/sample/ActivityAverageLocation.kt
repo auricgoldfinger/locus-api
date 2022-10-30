@@ -30,25 +30,24 @@ class ActivityAverageLocation : FragmentActivity() {
 
     //define the listener
     private val locationListener: LocationListener = object : LocationListener {
-        override fun onLocationChanged(location: android.location.Location?) {
-            if (location != null) {
+        override fun onLocationChanged(location: android.location.Location) {
 
-                val latitude = location.latitude
-                latitudeList.add(latitude)
-                val longitude = location.longitude
-                longitudeList.add(longitude)
-                val altitude = location.altitude
-                altitudeList.add(altitude);
+            val latitude = location.latitude
+            latitudeList.add(latitude)
+            val longitude = location.longitude
+            longitudeList.add(longitude)
+            val altitude = location.altitude
+            altitudeList.add(altitude);
 
-                txtLastLocation!!.text = ("${location.latitude} , ${location.longitude} (${location.altitude}m)")
-                txtAvgLat!!.text = "${latitudeList.average()}"
-                txtAvgLon!!.text = "${longitudeList.average()}"
-                txtAvgAlt!!.text = "${altitudeList.average()}m"
-                txtAvgPoints!!.text = "${latitudeList.size} points"
-                Logger.logD(TAG, "\n\tAdded latitude: $latitude, longitude: $longitude, altitude $altitude" +
-                        "\n\tAvg (${latitudeList.size}pt) ${latitudeList.average()}, ${longitudeList.average()} (${altitudeList.average()}m)")
-            }
+            txtLastLocation!!.text = ("${location.latitude} , ${location.longitude} (${location.altitude}m)")
+            txtAvgLat!!.text = "${latitudeList.average()}"
+            txtAvgLon!!.text = "${longitudeList.average()}"
+            txtAvgAlt!!.text = "${altitudeList.average()}m"
+            txtAvgPoints!!.text = "${latitudeList.size} points"
+            Logger.logD(TAG, "\n\tAdded latitude: $latitude, longitude: $longitude, altitude $altitude" +
+                    "\n\tAvg (${latitudeList.size}pt) ${latitudeList.average()}, ${longitudeList.average()} (${altitudeList.average()}m)")
         }
+
         override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
             Logger.logD(TAG, "$provider status change to $status")
         }
@@ -84,7 +83,6 @@ class ActivityAverageLocation : FragmentActivity() {
                     Location().apply {
                         latitude = avgLat
                         longitude = avgLon
-                        hasAltitude = true
                         altitude = avgAlt
                     })
             finish()
@@ -112,18 +110,24 @@ class ActivityAverageLocation : FragmentActivity() {
 
             val bestProvider = locationManager!!.getBestProvider(criteria, true)
 
-            Logger.logD(TAG, "bestProvider: $bestProvider")
+            if (bestProvider != null) {
+                Logger.logD(TAG, "bestProvider: $bestProvider")
 
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
 
-                // Request access
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this@ActivityAverageLocation, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                    ActivityCompat.requestPermissions(this@ActivityAverageLocation, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-                } else {
-                    ActivityCompat.requestPermissions(this@ActivityAverageLocation, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+                    // Request access
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(this@ActivityAverageLocation, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                        ActivityCompat.requestPermissions(this@ActivityAverageLocation, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+                    } else {
+                        ActivityCompat.requestPermissions(this@ActivityAverageLocation, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+                    }
                 }
+                locationManager!!.requestLocationUpdates(bestProvider, 2000L, 0F, locationListener)
             }
-            locationManager!!.requestLocationUpdates(bestProvider, 2000L, 0F, locationListener)
         }
     }
 

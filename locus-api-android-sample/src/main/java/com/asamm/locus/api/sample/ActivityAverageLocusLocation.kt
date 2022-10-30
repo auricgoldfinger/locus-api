@@ -87,7 +87,6 @@ class ActivityAverageLocusLocation : FragmentActivity() {
                     Location().apply {
                         latitude = avgLat
                         longitude = avgLon
-                        hasAltitude = true
                         altitude = avgAlt
                     })
             finish()
@@ -155,7 +154,7 @@ class ActivityAverageLocusLocation : FragmentActivity() {
                 txtLastLocation.text = "Position: ${uc.locMyLocation.latitude} , ${uc.locMyLocation.longitude}"
                 txtLastAltitude.text = "Altitude: ${uc.locMyLocation.altitude}m"
                 txtSatsUsed.text = "Satellites: ${uc.gpsSatsUsed.toString()}/${uc.gpsSatsAll.toString()}"
-                txtAccuracy.text = "Accuracy: ${uc.locMyLocation.accuracy.toString()}"
+                txtAccuracy.text = "Accuracy: (hor) ${uc.locMyLocation.accuracyHor}, (vert) ${uc.locMyLocation.accuracyVer}"
                 txtBearing.text = "Bearing: ${uc.locMyLocation.bearing.toString()}"
                 txtSpeed.text = "Speed: ${uc.locMyLocation.speed.toString()}"
 
