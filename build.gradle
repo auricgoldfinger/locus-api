@@ -112,8 +112,8 @@ configure([
         compileSdk 36
 
         defaultConfig {
-            minSdk 23
-            targetSdk 35
+            minSdk 33
+            targetSdk 36
         }
 
         packaging {

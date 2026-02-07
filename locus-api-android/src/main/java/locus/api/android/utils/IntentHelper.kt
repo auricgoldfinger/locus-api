@@ -312,14 +312,10 @@ object IntentHelper {
 
             // Try as boxed Long array (Serializable) - newer Locus versions send this format
             try {
-                val boxedArray = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    // Use type-safe API for Android 33+
-                    intent.getSerializableExtra(LocusConst.INTENT_EXTRA_ITEMS_ID, Array<Long>::class.java)
-                } else {
-                    // Use deprecated API for Android 23-32
-                    @Suppress("DEPRECATION")
-                    intent.getSerializableExtra(LocusConst.INTENT_EXTRA_ITEMS_ID) as? Array<Long>
-                }
+                val boxedArray = intent.getSerializableExtra(
+                    LocusConst.INTENT_EXTRA_ITEMS_ID,
+                    Array<Long>::class.java
+                )
 
                 if (boxedArray != null) {
                     // Convert boxed Long[] to primitive long[]
