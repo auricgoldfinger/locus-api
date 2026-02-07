@@ -13,7 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
 import locus.api.android.utils.IntentHelper
 import locus.api.objects.extra.Location
-import locus.api.utils.Logger
+import com.asamm.logger.Logger
 
 
 class ActivityAverageLocation : FragmentActivity() {
@@ -44,12 +44,12 @@ class ActivityAverageLocation : FragmentActivity() {
             txtAvgLon!!.text = "${longitudeList.average()}"
             txtAvgAlt!!.text = "${altitudeList.average()}m"
             txtAvgPoints!!.text = "${latitudeList.size} points"
-            Logger.logD(TAG, "\n\tAdded latitude: $latitude, longitude: $longitude, altitude $altitude" +
+            Logger.d(TAG, "\n\tAdded latitude: $latitude, longitude: $longitude, altitude $altitude" +
                     "\n\tAvg (${latitudeList.size}pt) ${latitudeList.average()}, ${longitudeList.average()} (${altitudeList.average()}m)")
         }
 
         override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
-            Logger.logD(TAG, "$provider status change to $status")
+            Logger.d(TAG, "$provider status change to $status")
         }
         override fun onProviderEnabled(provider: String) {}
         override fun onProviderDisabled(provider: String) {}
@@ -76,7 +76,7 @@ class ActivityAverageLocation : FragmentActivity() {
             val avgLon = longitudeList.average()
             val avgAlt = altitudeList.average()
 
-            Logger.logI(TAG, "Average after ${latitudeList.size} points: $avgLat, $avgLon - ${avgAlt}m")
+            Logger.i(TAG, "Average after ${latitudeList.size} points: $avgLat, $avgLon - ${avgAlt}m")
 
             IntentHelper.sendGetLocationData(this@ActivityAverageLocation,
                     "$avgLon, $avgLat",
@@ -111,7 +111,7 @@ class ActivityAverageLocation : FragmentActivity() {
             val bestProvider = locationManager!!.getBestProvider(criteria, true)
 
             if (bestProvider != null) {
-                Logger.logD(TAG, "bestProvider: $bestProvider")
+                Logger.d(TAG, "bestProvider: $bestProvider")
 
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                         this,
@@ -133,12 +133,12 @@ class ActivityAverageLocation : FragmentActivity() {
 
     fun stopLocationGathering() {
         locationManager?.removeUpdates(locationListener)
-        Logger.logI(TAG, "Location gathering stopped")
+        Logger.i(TAG, "Location gathering stopped")
     }
     override fun onPause() {
         super.onPause()
         stopLocationGathering()
-        Logger.logD(TAG, "onPause, done")
+        Logger.d(TAG, "onPause, done")
     }
 
     companion object {

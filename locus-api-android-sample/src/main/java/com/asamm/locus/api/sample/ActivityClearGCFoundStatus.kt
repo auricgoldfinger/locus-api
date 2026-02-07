@@ -13,7 +13,7 @@ import locus.api.android.utils.IntentHelper
 import locus.api.android.utils.LocusUtils
 import locus.api.objects.geoData.Point
 import locus.api.objects.geocaching.GeocachingLog
-import locus.api.utils.Logger
+import com.asamm.logger.Logger
 
 class ActivityClearGCFoundStatus : FragmentActivity() {
 
@@ -39,7 +39,7 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
 
     private fun checkStartIntent() {
         val intent = intent
-        Logger.logD(TAG, "received intent: $intent")
+        Logger.d(TAG, "received intent: $intent")
         if (intent == null) {
             return
         }
@@ -48,7 +48,7 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
 //        intent.putExtra(LocusConst.INTENT_EXTRA_PACKAGE_NAME, "menion.android.locus.pro")
         val lv = LocusUtils.createLocusVersion(this, intent)
         if (lv == null) {
-            Logger.logD(TAG, "checkStartIntent(), cannot obtain LocusVersion")
+            Logger.d(TAG, "checkStartIntent(), cannot obtain LocusVersion")
             return
         }
 
@@ -61,7 +61,7 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
                     logResult(clearFoundStatus(pt, lv), pt) { _: Int, _: Point, msg: String -> Toast.makeText(this@ActivityClearGCFoundStatus, msg, Toast.LENGTH_SHORT).show() }
                 }
             } catch (e: Exception) {
-                Logger.logE(TAG, "handle point tools", e)
+                Logger.e(e, TAG, "handle point tools")
             }
         } else if (IntentHelper.isIntentPointsTools(intent)) {
             val pointIds = IntentHelper.getPointsFromIntent(intent)
@@ -127,7 +127,7 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
 //                Logger.logI(TAG, "Ahh, I secretly toggled the status, so now FOUND = ${pt.gcData!!.isFound}, which means that the following message is a lie.")
             }
         } else {
-            Logger.logW(TAG, "Point ${pt.id} (${pt.name}) isn't a geocache")
+            Logger.w(TAG, "Point ${pt.id} (${pt.name}) isn't a geocache")
             result = NO_GEOCACHE
         }
 
@@ -148,7 +148,7 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
             try {
                 val pt = ActionBasics.getPoint(this@ActivityClearGCFoundStatus, lv, wptId)
                 if (pt?.gcData != null) {
-                    Logger.logD(TAG, "loadGeocachePointsFromLocus(), searched wptId:" + wptId + ", vs db point:" + pt.id)
+                    Logger.d(TAG, "loadGeocachePointsFromLocus(), searched wptId:" + wptId + ", vs db point:" + pt.id)
                     val result = clearFoundStatus(pt, lv)
                     if (result == STATUS_CLEARED) {
                         ++clearCount
@@ -158,7 +158,7 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
                     logResult(result, pt) { _: Int, _: Point, _: String -> run {} }
                 }
             } catch (e: Exception) {
-                Logger.logE(TAG, "loadPointsFromLocus($ptsIds)", e)
+                Logger.e(e, TAG, "loadPointsFromLocus($ptsIds)")
             }
         }
 
@@ -167,7 +167,7 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
         } else if (clearCount > 1)
             Toast.makeText(this@ActivityClearGCFoundStatus, "Found status cleared for '$lastCache' and  ${clearCount - 1} others", Toast.LENGTH_LONG).show()
         else
-            Logger.logW(TAG, "No GC Found-statusses were cleared")
+            Logger.w(TAG, "No GC Found-statusses were cleared")
     }
 
     private fun logResult(result: Int, pt: Point, s: (Int, Point, String) -> Unit) {
@@ -175,31 +175,31 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
         when (result) {
             NO_GEOCACHE -> {
                 msg = "'${pt.name} isn't a geocache, so I can't clear its found state either"
-                Logger.logE(TAG, msg)
+                Logger.e(null, TAG, msg)
             }
             STATUS_CLEARED -> {
                 msg = "GC Found-status cleared for ${pt.gcData!!.cacheID}: ${pt.name}"
-                Logger.logI(TAG, msg)
+                Logger.i(TAG, msg)
             }
             STATUS_ALREADY_CLEARED -> {
                 msg = "GC-Found status was already cleared for ${pt.gcData!!.cacheID}: ${pt.name}"
-                Logger.logI(TAG, msg)
+                Logger.i(TAG, msg)
             }
             ERROR_WHILE_CLEARING_STATUS -> {
                 msg = "Found status NOT cleared for ${pt.name}"
-                Logger.logE(TAG, msg)
+                Logger.e(null, TAG, msg)
             }
             FIELDNOTE_AVAILABLE_STATUS_FIXED -> {
                 msg = "Fieldnote found in ${pt.gcData!!.cacheID}: ${pt.name}, but cache is not marked as found. Fixed"
-                Logger.logI(TAG, msg)
+                Logger.i(TAG, msg)
             }
             FIELDNOTE_AVAILABLE_STATUS_NOT_FIXED -> {
                 msg = "Fieldnote found in ${pt.gcData!!.cacheID}: ${pt.name}, but cache is not marked as found. Couldn't fix it. Ah well..."
-                Logger.logW(TAG, msg)
+                Logger.w(TAG, msg)
             }
             FIELDNOTE_AVAILABLE_STATUS_NOT_CLEARED -> {
                 msg = "There's a field note in '${pt.gcData!!.cacheID}: ${pt.name}' so I'm not updating the found status"
-                Logger.logW(TAG, msg)
+                Logger.w(TAG, msg)
             }
         }
         s(result, pt, msg)

@@ -13,7 +13,7 @@ import locus.api.android.objects.LocusVersion
 import locus.api.android.utils.IntentHelper
 import locus.api.android.utils.LocusUtils
 import locus.api.objects.extra.Location
-import locus.api.utils.Logger
+import com.asamm.logger.Logger
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -80,7 +80,7 @@ class ActivityAverageLocusLocation : FragmentActivity() {
             val avgLon = longitudeList.average()
             val avgAlt = altitudeList.average()
 
-            Logger.logI(TAG, "Average after ${latitudeList.size} points: $avgLat, $avgLon - ${avgAlt}m")
+            Logger.i(TAG, "Average after ${latitudeList.size} points: $avgLat, $avgLon - ${avgAlt}m")
 
             IntentHelper.sendGetLocationData(this@ActivityAverageLocusLocation,
                     "$avgLon, $avgLat",
@@ -119,11 +119,11 @@ class ActivityAverageLocusLocation : FragmentActivity() {
                         handleUpdate(lv, uc)
                     } ?: {
                         handleUpdate(lv, null)
-                        Logger.logW(TAG, "refreshContent(), unable to obtain `UpdateContainer`")
+                        Logger.w(TAG, "refreshContent(), unable to obtain `UpdateContainer`")
                     }()
                 } ?: {
                     handleUpdate(null, null)
-                    Logger.logW(TAG, "refreshContent(), unable to obtain `ActiveVersion`")
+                    Logger.w(TAG, "refreshContent(), unable to obtain `ActiveVersion`")
                 }()
 
             }.start()
@@ -148,7 +148,7 @@ class ActivityAverageLocusLocation : FragmentActivity() {
                 val longitude = uc.locMyLocation.longitude
                 longitudeList.add(longitude)
                 val altitude = uc.locMyLocation.altitude
-                altitudeList.add(altitude);
+                altitude?.let { altitudeList.add(it) }
 
                 txtTime.text = "GPS Time: ${SimpleDateFormat.getTimeInstance().format(Date(uc.locMyLocation.time))}"
                 txtLastLocation.text = "Position: ${uc.locMyLocation.latitude} , ${uc.locMyLocation.longitude}"
@@ -165,7 +165,7 @@ class ActivityAverageLocusLocation : FragmentActivity() {
 
                 txtTvInfo.text = "${SimpleDateFormat.getTimeInstance().format(Date())}, Locus v${lv.versionName}, battery: ${uc.deviceBatteryValue}%"
 
-                Logger.logD(TAG, "\n\tAdded latitude: $latitude, longitude: $longitude, altitude $altitude" +
+                Logger.d(TAG, "\n\tAdded latitude: $latitude, longitude: $longitude, altitude $altitude" +
                         "\n\tAvg (${latitudeList.size}pt) ${latitudeList.average()}, ${longitudeList.average()} (${altitudeList.average()}m)")
             }
         }

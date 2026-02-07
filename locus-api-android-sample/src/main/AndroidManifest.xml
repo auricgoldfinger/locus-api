@@ -96,7 +96,11 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ActivityAverageLocusLocation" android:label="Average" android:icon="@drawable/ic_average_location">
+        <activity
+            android:name=".ActivityAverageLocusLocation"
+            android:label="Average"
+            android:icon="@drawable/ic_average_location"
+            android:exported="true">
             <!-- thanks to this, app appear in list of available locations -->
             <intent-filter >
                 <action android:name="locus.api.android.INTENT_ITEM_GET_LOCATION" />

@@ -29,7 +29,7 @@ android {
 
 dependencies {
     // Kotlin
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:' + KOTLIN_VERSION
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.21'
 
     // locus API
     implementation project(':locus-api-android')

@@ -3,15 +3,11 @@ apply plugin: 'java'
 apply plugin: "kotlin"
 apply plugin: 'maven-publish'
 
-// set Java 8 compatibility
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
 dependencies {
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:' + KOTLIN_VERSION
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.21'
 
     // Logger
-    api 'com.github.asamm:logger-asamm:' + LOCUS_LOGGER
+    api 'com.github.asamm:logger-asamm:2.2'
 }
 
 compileKotlin {
@@ -26,6 +22,8 @@ compileTestKotlin {
 }
 
 java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     withSourcesJar()
     withJavadocJar()
 }
