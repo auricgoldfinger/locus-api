@@ -40,6 +40,42 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
     private fun checkStartIntent() {
         val intent = intent
         Logger.d(TAG, "received intent: $intent")
+
+        // DEBUG: Dump all intent extras to understand format
+        intent.extras?.let { bundle ->
+            Logger.d(TAG, "=== Intent Extras Debug ===")
+            for (key in bundle.keySet()) {
+                val value = bundle.get(key)
+                Logger.d(TAG, "  Key: $key")
+                Logger.d(TAG, "    Type: ${value?.javaClass?.name}")
+                Logger.d(TAG, "    Value: $value")
+
+                // Special handling for byte arrays
+                if (value is ByteArray) {
+                    Logger.d(TAG, "    ByteArray length: ${value.size}")
+                    Logger.d(TAG, "    ByteArray hex: ${value.joinToString(" ") { "%02x".format(it) }}")
+                }
+
+                // Special handling for Parcelable
+                if (value is android.os.Parcelable) {
+                    Logger.d(TAG, "    Parcelable class: ${value.javaClass.name}")
+                }
+
+                // Try to get as LongArray
+                if (key == locus.api.android.utils.LocusConst.INTENT_EXTRA_ITEMS_ID) {
+                    val asLongArray = intent.getLongArrayExtra(key)
+                    Logger.d(TAG, "    As LongArray: $asLongArray (size: ${asLongArray?.size})")
+
+                    val asByteArray = intent.getByteArrayExtra(key)
+                    Logger.d(TAG, "    As ByteArray: ${asByteArray?.size} bytes")
+
+                    val asParcelable = intent.getParcelableExtra<android.os.Parcelable>(key)
+                    Logger.d(TAG, "    As Parcelable: ${asParcelable?.javaClass?.name}")
+                }
+            }
+            Logger.d(TAG, "=== End Intent Extras ===")
+        }
+
         if (intent == null) {
             return
         }
@@ -63,20 +99,32 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
             } catch (e: Exception) {
                 Logger.e(e, TAG, "handle point tools")
             }
+            finish()
+            return
         } else if (IntentHelper.isIntentPointsTools(intent)) {
             val pointIds = IntentHelper.getPointsFromIntent(intent)
             if (pointIds == null || pointIds.isEmpty()) {
                 AlertDialog.Builder(this@ActivityClearGCFoundStatus)
                         .setTitle("Intent - Points screen (Tools)")
-                        .setMessage("Problem with loading waypointIds").setPositiveButton("Close") { _, _ -> }
+                        .setMessage("Problem with loading waypointIds")
+                        .setPositiveButton("Close") { _, _ -> finish() }
                         .show()
             } else {
-                clearFoundStatusFromCachesById(lv, pointIds)
+                AlertDialog.Builder(this@ActivityClearGCFoundStatus)
+                        .setTitle("Clear Found Status")
+                        .setMessage("Clear found status for ${pointIds.size} selected cache(s)?")
+                        .setPositiveButton("Clear") { _, _ ->
+                            clearFoundStatusFromCachesById(lv, pointIds)
+                            finish()
+                        }
+                        .setNegativeButton("Cancel") { _, _ -> finish() }
+                        .show()
             }
+            return
         } else {
             Toast.makeText(this@ActivityClearGCFoundStatus, "Cannot handle this!", Toast.LENGTH_SHORT).show()
+            finish()
         }
-        finish()
     }
 
     private fun clearFoundStatus(pt: Point, lv: LocusVersion): Int {
@@ -158,7 +206,8 @@ class ActivityClearGCFoundStatus : FragmentActivity() {
                     logResult(result, pt) { _: Int, _: Point, _: String -> run {} }
                 }
             } catch (e: Exception) {
-                Logger.e(e, TAG, "loadPointsFromLocus($ptsIds)")
+                Logger.e(e, TAG, "clearFoundStatusFromCachesById($wptId)")
+                Toast.makeText(this@ActivityClearGCFoundStatus, "Error processing point $wptId: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
 

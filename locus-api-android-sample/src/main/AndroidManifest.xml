@@ -74,7 +74,7 @@
 
         <activity
             android:name=".ActivityClearGCFoundStatus"
-            android:exported="false"
+            android:exported="true"
             android:label="Clear Found Status">
 
             <!-- thanks to this, app appear in sub-menu of only geocache! -->

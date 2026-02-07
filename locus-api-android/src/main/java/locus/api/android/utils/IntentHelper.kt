@@ -15,10 +15,12 @@ package locus.api.android.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import com.asamm.loggerV2.logD
 import com.asamm.loggerV2.logE
 import locus.api.android.ActionBasics
 import locus.api.android.objects.LocusVersion
+import locus.api.android.objects.ParcelableContainer
 import locus.api.android.utils.exceptions.RequiredVersionMissingException
 import locus.api.objects.extra.Location
 import locus.api.objects.geoData.Point
@@ -302,7 +304,34 @@ object IntentHelper {
      */
     fun getItemsId(intent: Intent): LongArray? {
         if (intent.hasExtra(LocusConst.INTENT_EXTRA_ITEMS_ID)) {
-            return intent.getLongArrayExtra(LocusConst.INTENT_EXTRA_ITEMS_ID)
+            // Try standard primitive long array first (backwards compatibility)
+            val longArray = intent.getLongArrayExtra(LocusConst.INTENT_EXTRA_ITEMS_ID)
+            if (longArray != null) {
+                return longArray
+            }
+
+            // Try as boxed Long array (Serializable) - newer Locus versions send this format
+            try {
+                val boxedArray = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    // Use type-safe API for Android 33+
+                    intent.getSerializableExtra(LocusConst.INTENT_EXTRA_ITEMS_ID, Array<Long>::class.java)
+                } else {
+                    // Use deprecated API for Android 23-32
+                    @Suppress("DEPRECATION")
+                    intent.getSerializableExtra(LocusConst.INTENT_EXTRA_ITEMS_ID) as? Array<Long>
+                }
+
+                if (boxedArray != null) {
+                    // Convert boxed Long[] to primitive long[]
+                    return LongArray(boxedArray.size) { i ->
+                        boxedArray[i]
+                    }
+                }
+            } catch (e: Exception) {
+                logE(tag = TAG, ex = e) {
+                    "Failed to parse INTENT_EXTRA_ITEMS_ID as boxed Long array"
+                }
+            }
         }
         return null
     }
