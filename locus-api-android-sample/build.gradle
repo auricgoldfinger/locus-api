@@ -27,6 +27,14 @@ android {
     }
 }
 
+// Custom task to clean artifacts before building
+tasks.register('cleanBuild') {
+    group = 'build'
+    description = 'Clean artifacts and build the project'
+    dependsOn clean
+    finalizedBy 'assembleLocusApiSampleDebug'
+}
+
 dependencies {
     // Kotlin
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.2.21'
